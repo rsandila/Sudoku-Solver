@@ -1,0 +1,33 @@
+Sudoku Solver
+----------------
+
+What is this?
+--------------
+This program will solve a puzzle following the rules of Sudoku. A description of the rules used can be found at 
+http://en.wikipedia.org/wiki/Sudoku.
+
+The application impliments a 9 x 9 puzzle using the values 1 to 9.
+
+How does it work?
+--------------------
+It is a command line application that can take one parameter. The parameter can be a text file with initial values
+for the puzzle. The format of the file is as follows:
+
+x y value
+
+Where x and y is in the range 0 to 8 and value is in the range 1 to 9.
+
+Very little verification is done on this file, so I expect many bugs related to this function. It will not detect if an impossible
+starting condition has been set.
+
+The application will load the initial state ( if specified ), initialize the rest of the puzzle to random values and then do a search
+to find a solution where the conditions of the game has been met.
+
+License
+--------
+GPL license as can be found at http://www.gnu.org/licenses/licenses.html#GPL
+
+Disclaimer
+-----------
+This software is as is. I do not guarantee that it will do anything at all. I have tested it, and it works for me. The source is
+available, you are welcome to look at it and fix any bugs you find.
