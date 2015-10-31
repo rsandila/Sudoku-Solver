@@ -1,8 +1,8 @@
 /***************************************************************************
- *            block3x3.h
+ *            game.h
  *
- *  Sat Aug  6 08:28:32 2005
- *  Copyright  2005  Copyright  2005  Robert Sandilands
+ *  Sat May 27 2006
+ *  Copyright  2006  Robert Sandilands
  *  Email rsandila@netscape.net
  ****************************************************************************/
 
@@ -22,47 +22,33 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
  
-#ifndef _BLOCK3X3_H
-#define _BLOCK3X3_H
+#ifndef _GAME_BASE_H
+#define _GAME_BASE_H
 
-#define BLOCKSIZE  (3)
+#include <iostream>
+#include "../include/block3x3.h"
 
-class block3x3
+class game_base
 {
 public:
-	block3x3();
-	virtual ~block3x3();
-	bool isOk() { return( installed ); };
+	game_base();
+	virtual ~game_base();
+	virtual bool isOk() const { return( installed ); };
 	
-	int val( int x, int y );
-	void setFixedVal( int x, int y, int val );
-	inline void rotate()
-	{
-		int x1, y1, x2, y2;
-		int temp;
+	virtual void setFixedVal( int bx, int by, int x, int y, int val );
+	virtual void seed();
+	virtual int calculate_cost();
+	virtual int rotate( int initial_cost ) = 0;
+	virtual void dump_state( std::ostream& ostr );
+	virtual void dump_rotate_state( std::ostream & ostr ) const {;};
 		
-		do
-		{
-			x1 = random() % BLOCKSIZE;
-			y1 = random() % BLOCKSIZE;
-		} while ( used[ x1 * BLOCKSIZE + y1 ] );
-		do
-		{
-			x2 = random() % BLOCKSIZE;
-			y2 = random() % BLOCKSIZE;
-		} while ( ( x1 == x2 && y1 == y2 ) || used[ x2 * BLOCKSIZE + y2 ] );
-		
-		temp = block[ x1 ][ y1 ];
-		block[ x1 ][ y1 ] = block[ x2 ][ y2 ];
-		block[ x2 ][ y2 ] = temp;	
-	}
-	void seed();
+	bool copy( const game_base & other );
 protected:
-	int block[BLOCKSIZE][BLOCKSIZE];
-	bool used[BLOCKSIZE*BLOCKSIZE];
-	bool fixed[BLOCKSIZE*BLOCKSIZE];
+	block3x3 blocks[BLOCKSIZE][BLOCKSIZE];
+	int mostx, mosty;
+	int notchanged;
 private:
 	bool installed;
 };
 
-#endif /* _BLOCK3X3_H */
+#endif /* _GAME_H */

@@ -8,6 +8,9 @@ sudoku_includedir = $(pkgincludedir)
 
 sudoku_include_DATA = \
 	block3x3.h\
-	game.h
+	game_base.h\
+	game_old.h\
+	game_mixed.h\
+	game_simann.h
 
 EXTRA_DIST = $(sudoku_include_DATA)

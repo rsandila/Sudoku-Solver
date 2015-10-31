@@ -13,9 +13,13 @@ The name of the constant is BLOCKSIZE.
 
 How does it work?
 --------------------
-It is a command line application that can take one 
-parameter. The parameter can be a text file with initial 
-values for the puzzle. The format of the file is as follows:
+It is a command line application that can take several 
+parameters.
+
+-h/-? : Shows help
+-s old|simann : Uses old style or Simulated Annealing to search for a solution.
+-i filename : This loads a text file with initial values for the puzzle. The 
+format of the file is as follows:
 
 x y value
 
@@ -33,29 +37,61 @@ game has been met.
 
 Performance
 --------------
-With version 0.0.3 I had the following experimental results
+With version 0.0.5 I had the following experimental results
 for solving puzzles.
 
-   N        	time
-   2			< 1 second
-   3			< 1 second
-   4			< 1 second
-   5			< 3 seconds
-   6			15, 26, 31 seconds
-   7			81, 644, 679 seconds
-   8
+With the original (old) search technique, I had the following results:
+
+   N        	rounds				time
+   2			12 - 31				< 1 second
+   3			815 - 2706			< 1 second
+   4			16500 - 20954		< 1 second
+   5			121347 - 148071		1 - 2 seconds
+   6			441864 - 1048322	9 - 23 seconds
+   7			2584317 - 20384945	87 - 679 seconds
    
-Something to remember is that due to the nature of the
-search algorithm the time to solve a puzzle can vary widely.
-
-These times were on an AMD64 3700+ running 64-bit Linux.
-
 With version 0.0.4 a new technique was introduced: Simulated Annealing. It
 seems to perform better for large N. Further improvements may be possible by
 mixing the search algorithm by using the old style for large error values
-and switching to the new style for small error values. A slight redesign of
-the code would be needed for this and may be done later.
+and switching to the new style for small error values. 
 
+With Simulated Annealing I had the following experimental results:
+
+	N			rounds				time
+	2			10 - 144			< 1 second
+	3			152851 - 172192		1 second 
+	4			234445 - 239997		1 second
+	5			320521 - 440319 	4 - 5 seconds
+	6			799286 - 1090965	18 - 26 seconds
+	7		    3062905 - 3653777   106	- 128 seconds
+
+With version 0.0.5 I introduced a "mixed" search that mixed the old search technique with simulated 
+annealing. With the mixed search I had the following experimental results:
+
+	N			rounds				time
+	2			5 - 111				< 1 second
+	3			641 - 2262			< 1 second
+	4			18128 - 21799		< 1 second
+	5			124580 - 195620		1 - 2 seconds
+	6			664994 - 1039628	14 - 22 seconds
+	7			3143163 - 4807989	106 - 161 seconds
+	
+Something to remember is that due to the nature of the
+search algorithm the time to solve a puzzle can vary widely.
+
+These times were on an AMD64 3700+ running 64-bit Linux over at least 3 runs 
+for every test. Yes, I know it does not make for good statistics. But this
+is a hobby, not a scientific paper.
+
+Does these times imply anything about the different technique's? Not really. All
+of these techniques are non-deterministic and has parameters that can be 
+modified to change their behavior. There are probably better parameters that can
+be selected, I have just not found them yet.
+
+Are there better algorithms for solving Sudoku? For small BLOCKSIZE's: Without a 
+doubt. For larger BLOCKSIZE's, likely. I will try to find them and implement
+them.
+	
 Compiling
 -----------
 This code has been tested on Mac OS X, Solaris Sparc and

@@ -1,0 +1,5 @@
+1. Add flag to not wait for enter in the beginning
+2. Add mixed mode search class
+3. Specify search parameters on the command-line
+4. Specify puzzle size on the command-line
+5. Find a better way to determine which block to rotate

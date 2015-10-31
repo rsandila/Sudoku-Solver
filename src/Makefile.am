@@ -15,7 +15,11 @@ bin_PROGRAMS = sudoku
 sudoku_SOURCES = \
 	main.cc\
 	block3x3.cc\
-	game.cc
+	game_old.cc\
+	game_simann.cc\
+	game_base.cc\
+	game_mixed.cc\
+	parameters.cc
 
 sudoku_LDFLAGS = 
 

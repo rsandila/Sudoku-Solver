@@ -1,3 +1,6 @@
+	- Added command-line parameters
+	- Allow the user to select the search algorithm
+	- Add help option
 0.4	23 May 2006 Robert Sandilands <rsandilands@netscape.net>
 	- Added simulated annealing as search algorithm
 0.3	12 August 2005 Robert Sandilands <rsandila@netscape.net> 

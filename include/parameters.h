@@ -1,7 +1,7 @@
 /***************************************************************************
- *            block3x3.h
+ *            parameters.h
  *
- *  Sat Aug  6 08:28:32 2005
+ *  Created on: Sat May 27 02:47:01 2006
  *  Copyright  2005  Copyright  2005  Robert Sandilands
  *  Email rsandila@netscape.net
  ****************************************************************************/
@@ -21,48 +21,37 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
-#ifndef _BLOCK3X3_H
-#define _BLOCK3X3_H
+#ifndef _PARAMETERS_H_
+#define _PARAMETERS_H_
 
-#define BLOCKSIZE  (3)
+#include <ostream>
+#include <string>
 
-class block3x3
+class parameters
 {
-public:
-	block3x3();
-	virtual ~block3x3();
-	bool isOk() { return( installed ); };
+	public:
+		typedef enum { search_notdefined, search_old, search_simann, search_mixed } search_type;
+		
+		parameters( const int argc, const char ** argv );
+		virtual ~parameters();
+		virtual bool isOk() const { return( installed ); };
+		
+		bool getShouldLoadInitialState() const;
+		const std::string & getLoadInitialStatePath() const;
 	
-	int val( int x, int y );
-	void setFixedVal( int x, int y, int val );
-	inline void rotate()
-	{
-		int x1, y1, x2, y2;
-		int temp;
+		search_type getSearchType() const;
 		
-		do
-		{
-			x1 = random() % BLOCKSIZE;
-			y1 = random() % BLOCKSIZE;
-		} while ( used[ x1 * BLOCKSIZE + y1 ] );
-		do
-		{
-			x2 = random() % BLOCKSIZE;
-			y2 = random() % BLOCKSIZE;
-		} while ( ( x1 == x2 && y1 == y2 ) || used[ x2 * BLOCKSIZE + y2 ] );
-		
-		temp = block[ x1 ][ y1 ];
-		block[ x1 ][ y1 ] = block[ x2 ][ y2 ];
-		block[ x2 ][ y2 ] = temp;	
-	}
-	void seed();
-protected:
-	int block[BLOCKSIZE][BLOCKSIZE];
-	bool used[BLOCKSIZE*BLOCKSIZE];
-	bool fixed[BLOCKSIZE*BLOCKSIZE];
-private:
-	bool installed;
+		bool getShowHelp() const;		
+		void showHelp( std::ostream & instream );
+	protected:
+		bool parseParam( const int argc, const char ** argv );
+
+		bool installed;
+		bool hasInitialState;
+		bool hasShowHelp;
+		std::string initialStatePath;
+		search_type stype;	
 };
 
-#endif /* _BLOCK3X3_H */
+
+#endif	//_PARAMETERS_H_

@@ -24,7 +24,11 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "../include/game.h"
+#include <getopt.h>
+#include "../include/parameters.h"
+#include "../include/game_old.h"
+#include "../include/game_simann.h"
+#include "../include/game_mixed.h"
 
 bool isSaneXY( int val )
 {
@@ -32,9 +36,9 @@ bool isSaneXY( int val )
 	return( false );
 }
 
-int load_initial_state( game & mygame, const char * fname )
+int load_initial_state( game_base & mygame, const std::string& fname )
 {
-	std::ifstream inp( fname );
+	std::ifstream inp( fname.c_str() );
 	
 	if ( !inp.good() ) return( 1 );
 	std::cout << "Loading initial state from " << fname << std::endl;
@@ -69,48 +73,87 @@ int load_initial_state( game & mygame, const char * fname )
 	return( 0 );
 }
 
-int main( int argc, char ** argv )
+int main( int argc, const char ** argv )
 {
-	game mygame;
+	game_base * mygame;
 	time_t t;
 	time( &t );
 	srandom( t );
-	if ( argv[1] )
+	parameters param( argc, argv );
+	if ( !param.isOk() || param.getShowHelp() )
 	{
-		int result = load_initial_state( mygame, argv[1] );
+		std::cout << argv[0] << ": Usage" << std::endl;
+		param.showHelp( std::cout );
+		std::cout << std::endl;
+		return( !param.isOk() );
+	}
+	
+	switch ( param.getSearchType() )
+	{
+		case parameters::search_old:
+			mygame = new game_old();
+			break;
+		case parameters::search_simann:
+			mygame = new game_simann();
+			break;
+		case parameters::search_mixed:
+			mygame = new game_mixed();
+			break;
+		default:
+			std::cerr << argv[0] << ": Unknown search engine specified" << std::endl;
+			return( 1 );
+	}
+	if ( !mygame || !mygame->isOk() )
+	{
+		std::cerr << argv[0] << ": Error initializing search engine" << std::endl;
+		return( 1 );
+	}
+	if ( param.getShouldLoadInitialState() )
+	{
+		int result = load_initial_state( *mygame, param.getLoadInitialStatePath() );
 		if ( result )
 		{
+			delete mygame;
 			std::cerr << argv[0] << ": Error loading initial state" << std::endl;
 			return( 1 );
 		}
-    	mygame.dump_state( std::cout );
+    	mygame->dump_state( std::cout );
 	}
 	
 //	std::cout << "Seeding" << std::endl;
-	mygame.seed();
+	mygame->seed();
 	
-	mygame.dump_state( std::cout );
-	std::cout << "Press ENTER to start" << std::endl << std::flush;
-	getchar();
+	mygame->dump_state( std::cout );
+	if ( param.getShouldLoadInitialState() )
+	{
+		std::cout << "Press ENTER to start" << std::endl << std::flush;
+		getchar();
+	}	
 	time( &t );
 	int cost, round;
 	round = 0;
-	cost = mygame.calculate_cost();
+	cost = mygame->calculate_cost();
 	do 
 	{
-		cost = mygame.rotate( cost );
+		cost = mygame->rotate( cost );
 		round+=1;
-		if ( ( round %10000 ) == 0 ) std::cout << "COST: round = " << round << ", cost = " << cost << std::endl;
+		if ( ( round %10000 ) == 0 ) 
+		{
+			std::cout << "COST: round = " << round << ", cost = " << cost;
+			mygame->dump_rotate_state( std::cout );
+			std::cout << std::endl;
+		}
 		if ( ( round % 100000 ) == 0 ) 
 		{
-			mygame.dump_state( std::cout );
+			mygame->dump_state( std::cout );
 //			return( 1 );
 		}
 //		getchar();
 	} while ( cost );
 	time_t endt;
 	time( &endt );
-	mygame.dump_state( std::cout );
+	mygame->dump_state( std::cout );
 	std::cout << "Solution took " << difftime( endt, t ) << " seconds and " << round << " rounds at " << round/difftime( endt, t ) << " rounds/second" << std::endl;
+	delete mygame;
 	return 0;
 }
