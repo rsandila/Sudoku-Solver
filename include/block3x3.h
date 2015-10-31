@@ -25,6 +25,8 @@
 #ifndef _BLOCK3X3_H
 #define _BLOCK3X3_H
 
+#define BLOCKSIZE  (3)
+
 class block3x3
 {
 public:
@@ -34,11 +36,31 @@ public:
 	
 	int val( int x, int y );
 	void setFixedVal( int x, int y, int val );
-	void rotate();
+	inline void rotate()
+	{
+		int x1, y1, x2, y2;
+		int temp;
+		
+		do
+		{
+			x1 = random() % BLOCKSIZE;
+			y1 = random() % BLOCKSIZE;
+		} while ( used[ x1 * BLOCKSIZE + y1 ] );
+		do
+		{
+			x2 = random() % BLOCKSIZE;
+			y2 = random() % BLOCKSIZE;
+		} while ( ( x1 == x2 && y1 == y2 ) || used[ x2 * BLOCKSIZE + y2 ] );
+		
+		temp = block[ x1 ][ y1 ];
+		block[ x1 ][ y1 ] = block[ x2 ][ y2 ];
+		block[ x2 ][ y2 ] = temp;	
+	}
+	void seed();
 protected:
-	int block[3][3];
-	bool used[9];
-	bool fixed[9];
+	int block[BLOCKSIZE][BLOCKSIZE];
+	bool used[BLOCKSIZE*BLOCKSIZE];
+	bool fixed[BLOCKSIZE*BLOCKSIZE];
 private:
 	bool installed;
 };

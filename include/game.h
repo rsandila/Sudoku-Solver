@@ -38,10 +38,10 @@ public:
 	void setFixedVal( int bx, int by, int x, int y, int val );
 	void seed();
 	int calculate_cost();
-	int rotate();
+	int rotate( int initial_cost );
 	void dump_state( std::ostream& ostr );
 protected:
-	block3x3 blocks[3][3];
+	block3x3 blocks[BLOCKSIZE][BLOCKSIZE];
 	int mostx, mosty;
 	int notchanged;
 private:

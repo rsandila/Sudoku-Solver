@@ -28,7 +28,7 @@
 
 bool isSaneXY( int val )
 {
-	if ( val >=0 && val<=3 ) return( true );
+	if ( val >=0 && val<=BLOCKSIZE ) return( true );
 	return( false );
 }
 
@@ -53,13 +53,13 @@ int load_initial_state( game & mygame, const char * fname )
 		parse >> rx;
 		parse	>> ry;
 		parse	>> val;
-		bx = rx / 3;
-		by = ry / 3;
-		x = rx % 3;
-		y = ry % 3;
+		bx = rx / BLOCKSIZE;
+		by = ry / BLOCKSIZE;
+		x = rx % BLOCKSIZE;
+		y = ry % BLOCKSIZE;
 		if ( !isSaneXY( bx ) || !isSaneXY( by ) || 
 			  !isSaneXY( x ) || !isSaneXY( y ) ||
-			  val < 1 || val > 9 )
+			  val < 1 || val > BLOCKSIZE*BLOCKSIZE )
 		{
 			std::cerr << "Invalid line in " << fname << " with contents " << line << std::endl;
 			return( 1 );
@@ -86,25 +86,31 @@ int main( int argc, char ** argv )
     	mygame.dump_state( std::cout );
 	}
 	
-	std::cout << "Seeding" << std::endl;
+//	std::cout << "Seeding" << std::endl;
 	mygame.seed();
 	
 	mygame.dump_state( std::cout );
 	std::cout << "Press ENTER to start" << std::endl << std::flush;
 	getchar();
+	time( &t );
 	int cost, round;
 	round = 0;
+	cost = mygame.calculate_cost();
 	do 
 	{
-		cost = mygame.rotate();
+		cost = mygame.rotate( cost );
 		round+=1;
-		if ( ( round %100 ) == 0 ) std::cout << "COST: round = " << round << ", cost = " << cost << std::endl;
-//		if ( ( round % 100 ) == 0 ) mygame.dump_state( std::cout );
+		if ( ( round %10000 ) == 0 ) std::cout << "COST: round = " << round << ", cost = " << cost << std::endl;
+		if ( ( round % 100000 ) == 0 ) 
+		{
+			mygame.dump_state( std::cout );
+//			return( 1 );
+		}
 //		getchar();
 	} while ( cost );
 	time_t endt;
 	time( &endt );
 	mygame.dump_state( std::cout );
-	std::cout << "Solution took " << difftime( endt, t ) << " seconds" << std::endl;
+	std::cout << "Solution took " << difftime( endt, t ) << " seconds and " << round << " rounds at " << round/difftime( endt, t ) << " rounds/second" << std::endl;
 	return 0;
 }

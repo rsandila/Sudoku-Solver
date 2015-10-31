@@ -1793,7 +1793,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=sudoku
- VERSION=0.2
+ VERSION=0.3
 
 
 cat >>confdefs.h <<_ACEOF

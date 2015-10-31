@@ -26,8 +26,8 @@
  game::game()
  {
 	 installed = true;
-	 mostx = random()  % 3;
-	 mosty = random() % 3;
+	 mostx = random()  % BLOCKSIZE;
+	 mosty = random() % BLOCKSIZE;
 	 notchanged = 0;
  }
  
@@ -42,23 +42,23 @@ void game::setFixedVal( int bx, int by, int x, int y, int val )
  
 int game::calculate_cost()
  {
-	 bool used[10];
+	 bool used[BLOCKSIZE*BLOCKSIZE+1];
 	 int cost;
 	 int most_cost, last_cost;
 	 // do all x and calculate cost
 	 
 	 cost = 0;
 	 last_cost = 0;
-	 for ( int cnty = 0; cnty < 9; cnty++ )
+	 for ( int cnty = 0; cnty < BLOCKSIZE*BLOCKSIZE; cnty++ )
 	 {
-		 	int blocky = cnty / 3;
-		 	int itemy = cnty % 3;
+		 	int blocky = cnty / BLOCKSIZE;
+		 	int itemy = cnty % BLOCKSIZE;
 		 
-		    memset( used, 0 , sizeof(bool)*10 );
+		    memset( used, 0 , sizeof(bool)*(BLOCKSIZE*BLOCKSIZE+1) );
 		 	most_cost = 0;
-		 	for ( int cntx = 0; cntx<9; cntx++ )
+		 	for ( int cntx = 0; cntx<BLOCKSIZE*BLOCKSIZE; cntx++ )
 			{
-				int val = blocks[ cntx / 3 ][ blocky ].val( cntx % 3, itemy );
+				int val = blocks[ cntx / BLOCKSIZE ][ blocky ].val( cntx % BLOCKSIZE, itemy );
 				if ( used[val] ) 
 				{
 					cost+=1;
@@ -74,16 +74,16 @@ int game::calculate_cost()
 	 }
 	 // do all y and calculate cost
 	 last_cost = 0;
-	 for ( int cntx = 0; cntx < 9; cntx++ )
+	 for ( int cntx = 0; cntx < BLOCKSIZE*BLOCKSIZE; cntx++ )
 	 {
-		 	int blockx = cntx / 3;
-		 	int itemx = cntx % 3;
+		 	int blockx = cntx / BLOCKSIZE;
+		 	int itemx = cntx % BLOCKSIZE;
 		 
-		    memset( used, 0 , sizeof(bool)*10 );
+		    memset( used, 0 , sizeof(bool)*( BLOCKSIZE * BLOCKSIZE +1) );
 		 	most_cost = 0;		 
-		 	for ( int cnty = 0; cnty < 9; cnty++ )
+		 	for ( int cnty = 0; cnty < (BLOCKSIZE*BLOCKSIZE); cnty++ )
 			{
-				int val = blocks[ blockx ][ cnty / 3 ].val( itemx, cnty % 3 );
+				int val = blocks[ blockx ][ cnty / BLOCKSIZE ].val( itemx, cnty % BLOCKSIZE );
 				if ( used[val] ) 
 				{
 					cost+=1;
@@ -103,28 +103,27 @@ int game::calculate_cost()
 void game::seed()
  {
 	 	// do seeding of blocks
-	 for ( int cnt = 0; cnt < 9; cnt++ )
+	 for ( int cnt = 0; cnt < BLOCKSIZE*BLOCKSIZE; cnt++ )
 	 {
-		 blocks[ cnt / 3 ][ cnt % 3 ].rotate();
+		 blocks[ cnt / BLOCKSIZE ][ cnt % BLOCKSIZE ].seed();
 	 }
  }
  
-int game::rotate()
+int game::rotate(  int initial_cost  )
  {
-	 // calculate cost
-	 int initial_cost = calculate_cost();
 	 // pick a block at random and rotate it 
 	 int tx, ty;
-	 if ( !( random()%10 ) )
+	 if ( random()%2 )
 	 {
-		 tx = random() % 3;
-		 ty = random() % 3;
+		 tx = random() % BLOCKSIZE;
+		 ty = random() % BLOCKSIZE;
 	 }
 	 else
 	 {
 		 tx = mostx;
 		 ty = mosty;
 	 }
+//	 std::cout << "mostx = " << mostx << ", mosty = " << mosty << std::endl;
 	 block3x3 storage = blocks[ tx ][ ty ];
 	 
 	 blocks[ tx ][ ty ].rotate();
@@ -132,7 +131,7 @@ int game::rotate()
 	 int new_cost = calculate_cost();
 	 
 	 // if cost goes up, restore block to previous state
-	 if ( notchanged < 100000 && new_cost > initial_cost )
+	 if ( notchanged < 10000 && new_cost > initial_cost )
 	 {
 		 	blocks[ tx ][ ty ] = storage;
 		 	new_cost = initial_cost;
@@ -147,11 +146,12 @@ int game::rotate()
  
 void game::dump_state( std::ostream& ostr )
  {
-	 for ( int y =0; y < 9 ; y++ )
+	 for ( int y =0; y < BLOCKSIZE*BLOCKSIZE ; y++ )
 	 {
-		 for ( int x = 0; x < 9; x++ )
+		 for ( int x = 0; x < BLOCKSIZE*BLOCKSIZE; x++ )
 		 {
-			 ostr << blocks[ x / 3 ][ y / 3].val( x % 3, y %3 ) << "     ";
+        	 ostr.width( 4 );
+			 ostr << blocks[ x / BLOCKSIZE ][ y / BLOCKSIZE ].val( x % BLOCKSIZE, y % BLOCKSIZE );
 		 }
 		 ostr << std::endl;
 	 }

@@ -1,0 +1,8 @@
+0.3	12 August 2005 Robert Sandilands <rsandila@netscape.net> 
+	- Speed improvements. 
+	- Improvements in search algorithm. 
+	- Made it possible to solve N x N puzzles. Not only 3 x 3.
+0.2	6 August 2005 Robert Sandilands <rsandila@netscape.net>
+	-	First public release. Could read an initial state.
+0..1	5 August 2005 Robert Sandilands <rsandila@netscape.net>
+	- Wrote a proof of concept. Not released.

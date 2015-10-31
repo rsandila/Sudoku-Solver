@@ -26,9 +26,9 @@
 
 block3x3::block3x3()
 {
-	memset( used, 0, sizeof(bool)*9 );
-	memset( fixed, 0, sizeof(bool)*9 );
-	memset( block, -1, sizeof( int )*9 );
+	memset( used, 0, sizeof(bool)*BLOCKSIZE*BLOCKSIZE );
+	memset( fixed, 0, sizeof(bool)*BLOCKSIZE*BLOCKSIZE );
+	memset( block, -1, sizeof( int )*BLOCKSIZE*BLOCKSIZE );
 	installed = true;
 }
 
@@ -45,17 +45,17 @@ void block3x3::setFixedVal( int x, int y, int val )
 {
 		used[val-1] = true;
 		block[x][y] = val;
-		fixed[x * 3 + y] = true;
+		fixed[x * BLOCKSIZE + y] = true;
 }
 
-void block3x3::rotate()
+void block3x3::seed()
 {
-	bool lused[9];
+	bool lused[BLOCKSIZE*BLOCKSIZE];
 	int x, y;
 	
-	memcpy( lused, used, 9*sizeof(bool) );
+	memcpy( lused, used, BLOCKSIZE*BLOCKSIZE*sizeof(bool) );
 	x = y = 0;
-	for ( int cnt = 0; cnt < 9; cnt++ )
+	for ( int cnt = 0; cnt < BLOCKSIZE*BLOCKSIZE; cnt++ )
 	{
 		int tmpval;
 		
@@ -63,13 +63,13 @@ void block3x3::rotate()
 		{
 			do
 			{
-				tmpval = random() % 9;
+				tmpval = random() % (BLOCKSIZE*BLOCKSIZE);
 			} while ( lused[tmpval] );
 			lused[tmpval] = true;
 			block[ x ][ y ] = tmpval + 1;
 		}
 		y++;
-		if ( y > 2 )
+		if ( y > ( BLOCKSIZE -1 )	)
 		{
 			x += 1;
 			y = 0;
