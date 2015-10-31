@@ -28,6 +28,8 @@
 #include <iostream>
 #include "../include/block3x3.h"
 
+#define USE_SIM_ANEALING
+
 class game
 {
 public:
@@ -44,6 +46,9 @@ protected:
 	block3x3 blocks[BLOCKSIZE][BLOCKSIZE];
 	int mostx, mosty;
 	int notchanged;
+#ifdef USE_SIM_ANEALING
+	float temperature;
+#endif
 private:
 	bool installed;
 };

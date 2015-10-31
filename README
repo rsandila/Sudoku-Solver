@@ -50,6 +50,12 @@ search algorithm the time to solve a puzzle can vary widely.
 
 These times were on an AMD64 3700+ running 64-bit Linux.
 
+With version 0.0.4 a new technique was introduced: Simulated Annealing. It
+seems to perform better for large N. Further improvements may be possible by
+mixing the search algorithm by using the old style for large error values
+and switching to the new style for small error values. A slight redesign of
+the code would be needed for this and may be done later.
+
 Compiling
 -----------
 This code has been tested on Mac OS X, Solaris Sparc and

@@ -25,7 +25,7 @@
 #ifndef _BLOCK3X3_H
 #define _BLOCK3X3_H
 
-#define BLOCKSIZE  (3)
+#define BLOCKSIZE  (7)
 
 class block3x3
 {

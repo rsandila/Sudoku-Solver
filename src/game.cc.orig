@@ -29,9 +29,6 @@
 	 mostx = random()  % BLOCKSIZE;
 	 mosty = random() % BLOCKSIZE;
 	 notchanged = 0;
-#ifdef USE_SIM_ANEALING
-	 temperature = 70.0;
-#endif
  }
  
 game::~game()
@@ -132,40 +129,7 @@ int game::rotate(  int initial_cost  )
 	 blocks[ tx ][ ty ].rotate();
 	 // if cost goes down, repeat
 	 int new_cost = calculate_cost();
-
-#ifdef USE_SIM_ANEALING
-	 bool useNew = false;
-	 float delta = initial_cost - new_cost;
 	 
-	 if ( delta > 0 ) 
-	 {
-		 useNew = true;
-	 }
-	 else
-	 {
-		 float test = (float)rand()/(float)RAND_MAX;
-		 float calc = exp( 20*(delta+0.1)/temperature );
-		 
-		 if ( calc > test )
-		 {
-			 useNew = true;
-//			 std::cout << "new_cost " << new_cost << " initial_cost " << initial_cost << " test = " << test << " delta = " << delta << " calc = " << calc << " temperature = " << temperature << std::endl;
-		 }
-	 }
-	 
-	 if ( !useNew )
-	 {
-		 	blocks[ tx ][ ty ] = storage;
-		 	new_cost = initial_cost;
-	 }
-  	 notchanged += 1;
-	 if ( notchanged > 1000 )
-	 {
-		notchanged = 0;
-	 	temperature *= 0.99;
-	 }
-	 if ( temperature == 0 ) temperature += 1;
-#else	 
 	 // if cost goes up, restore block to previous state
 	 if ( notchanged < 10000 && new_cost > initial_cost )
 	 {
@@ -177,7 +141,6 @@ int game::rotate(  int initial_cost  )
 	 {	
 		 notchanged = 0;
 	 }
-#endif	 
 	 return( new_cost );
  }
  
